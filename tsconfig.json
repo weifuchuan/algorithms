@@ -27,6 +27,7 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
-    "built"
+    "built",
+    "**/*.test.ts"
   ]
 }

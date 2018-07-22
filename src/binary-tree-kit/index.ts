@@ -1,4 +1,4 @@
-import { BinaryTreeNode, Part } from '../common-type/index';
+import { BinaryTreeNode, Part, Comparable } from '../common-type/index';
 
 /**
  * preorder traversal for the node.
@@ -60,6 +60,25 @@ export namespace OrderedTree {
 				return [ p.value, true ];
 			}
 			if (k < p.key) {
+				p = p.left;
+			} else {
+				p = p.right;
+			}
+		}
+		return [ undefined as any, false ];
+	}
+
+	export function lookup2<K extends Comparable<K>, V, N extends BinaryTreeNode<K, V, any>>(
+		node: N | null,
+		k: K
+	): [V, boolean] {
+		let p = node;
+		while (p) {
+			const c = k.compareTo(p.key);
+			if (c === 0) {
+				return [ p.value, true ];
+			}
+			if (c < 0) {
 				p = p.left;
 			} else {
 				p = p.right;

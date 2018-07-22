@@ -8,6 +8,28 @@ export interface Comparable<T> {
 	compareTo(o: T): number;
 }
 
+export class ComparableBox implements Comparable<ComparableBox> {
+	private _value: string | number;
+
+	constructor(v: string | number) {
+		this._value = v;
+	}
+
+	get value(): string | number {
+		return this._value;
+	}
+
+	set value(v: string | number) {
+		this._value = v;
+	}
+
+	compareTo(o: ComparableBox): number {
+		if (this._value === o._value) return 0;
+		if (this._value < o._value) return -1;
+		else return 1;
+	}
+}
+
 export interface Part<First, Second> {
 	first: First;
 	second: Second;
