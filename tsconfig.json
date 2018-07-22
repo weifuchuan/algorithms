@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "strict": true,
+    "strictNullChecks": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outDir": "./built",
+    "sourceMap": true,
+    "baseUrl": "./src",
+    "experimentalDecorators": true,
+    "declaration": true,
+    "module": "commonjs",
+    "downlevelIteration": true,
+    "alwaysStrict": true,
+    "lib": [
+      "es2015",
+      "dom",
+      "es6",
+      "es7",
+      "es5"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "built"
+  ]
+}
