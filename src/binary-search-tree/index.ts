@@ -15,9 +15,7 @@ export type Key = number | string;
  * Key type must support <, >, =, so it will be number or string (type Key = number | string)
  * @param <V> type V is value type
  */
-export interface Node<V = any> extends BinaryTreeNode<Key, V, Node<V>> {
-	parent: Node<V> | null;
-}
+export interface Node<V = any> extends BinaryTreeNode<Key, V, Node<V>> {}
 
 /**
  * BSTree is the class of binary search tree

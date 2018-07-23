@@ -42,18 +42,64 @@ export function* postorderTraversal<K, V>(node: BinaryTreeNode<K, V, any> | null
 	};
 }
 
-export function farLeft<K, V, N extends BinaryTreeNode<K, V, any>>(node: N): N {
+export function farLeft<K, V, N extends BinaryTreeNode<K, V, N>>(node: N): N {
 	while (node.left) node = node.left;
 	return node;
 }
 
-export function farRight<K, V, N extends BinaryTreeNode<K, V, any>>(node: N): N {
+export function farRight<K, V, N extends BinaryTreeNode<K, V, N>>(node: N): N {
 	while (node.right) node = node.right;
 	return node;
 }
 
+export function rotateLeft<K, V, N extends BinaryTreeNode<K, V, N>>(node: N): N {
+	if (node.right === null) throw 'no right sub tree';
+	const x = node;
+	const p = x.parent;
+	const a = x.left;
+	const y = node.right!;
+	const b = y.left;
+	const c = y.right;
+	if (p) {
+		if (p.left === x) {
+			p.left = y;
+		} else {
+			p.right = y;
+		}
+	}
+	y.parent = p;
+	x.parent = y;
+	y.left = x;
+	x.right = b;
+	if (b) b.parent = x;
+	return y;
+}
+
+export function rotateRight<K, V, N extends BinaryTreeNode<K, V, N>>(node: N): N {
+	if (node.left === null) throw 'no left sub tree';
+	const y = node;
+	const p = y.parent;
+	const c = y.right;
+	const x = y.left!;
+	const a = x.left;
+	const b = x.right;
+	if (p) {
+		if (p.left === y) {
+			p.left = x;
+		} else {
+			p.right = x;
+		}
+	}
+	x.parent = p;
+	y.parent = x;
+	x.right = y;
+	y.left = b;
+	if (b) b.parent = y;
+	return x;
+}
+
 export namespace OrderedTree {
-	export function lookup<K, V, N extends BinaryTreeNode<K, V, any>>(node: N | null, k: K): [V, boolean] {
+	export function lookup<K, V, N extends BinaryTreeNode<K, V, N>>(node: N | null, k: K): [V, boolean] {
 		let p = node;
 		while (p) {
 			if (p.key === k) {

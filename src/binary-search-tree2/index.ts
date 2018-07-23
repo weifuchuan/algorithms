@@ -14,7 +14,6 @@ import {
  * @param <V> type V is value type
  */
 export interface Node<K extends Comparable<K>, V = any> extends BinaryTreeNode<K, V, Node<K, V>> {
-	parent: Node<K, V> | null;
 }
 
 /**

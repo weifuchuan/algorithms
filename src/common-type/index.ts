@@ -35,9 +35,10 @@ export interface Part<First, Second> {
 	second: Second;
 }
 
-export interface BinaryTreeNode<K, V, Leaf extends BinaryTreeNode<K, V, Leaf>> {
-	left: Leaf | null;
-	right: Leaf | null;
+export interface BinaryTreeNode<K, V, N extends BinaryTreeNode<K, V, N>> {
+	left: N | null;
+	right: N | null;
+	parent: N | null;
 	key: K;
 	value: V;
 }
