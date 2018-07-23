@@ -12,10 +12,10 @@ export interface Node<K extends Comparable<K>, V> extends BinaryTreeNode<K, V, N
  * @param <V> type V is value type
  */
 export class RBTree<K extends Comparable<K>, V> {
-  private root: Node<K, V> | null = null;
-  private comparator: (a:K, b:K)=>number; 
+	private root: Node<K, V> | null = null;
+	private comparator: (a: K, b: K) => number;
 
-  /**
+	/**
 	 * 
 	 * @param comparator Comparator is to comparate two key, which return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object. By default, use < and ===. 
 	 */
@@ -27,5 +27,7 @@ export class RBTree<K extends Comparable<K>, V> {
 		}
 	) {
 		this.comparator = comparator;
-	}
+  }
+  
+  
 }

@@ -37,43 +37,11 @@ export class BSTree<K, V = any> {
 	) {
 		this.comparator = comparator;
 	}
+
 	// insert a part of <key, value> into this tree
-	insert(k: K, v: V) {
+	insert(k: K, v: V): BSTree<K, V> {
 		this.root = insert(this.root, k, v, this.comparator);
-	}
-
-	/**
-	 * preorder traversal for this tree.
-	 * root -> left tree -> right tree
-	 */
-	*preorderTraversal(): IterableIterator<Part<K, V>> {
-		yield* preorderTraversal(this.root);
-	}
-
-	/**
-	 * In-order traversal for the node
-	 * left tree -> root -> right tree
-	 */
-	*inorderTraversal(): IterableIterator<Part<K, V>> {
-		yield* inorderTraversal(this.root);
-	}
-
-	/**
-	 * Post-order traversal for the node
-	 * left tree -> right tree -> root 
-	 */
-	*postorderTraversal(): IterableIterator<Part<K, V>> {
-		yield* postorderTraversal(this.root);
-	}
-
-	/**
-	 * transform to array
-	 * @returns ordered list by key
-	 */
-	toList(): Array<Part<K, V>> {
-		const result = [];
-		for (let p of this.inorderTraversal()) result.push(p);
-		return result;
+		return this;
 	}
 
 	/**
@@ -86,49 +54,21 @@ export class BSTree<K, V = any> {
 	}
 
 	/**
-	 * Get <key, value> by min key
-	 */
-	min(): Part<K, V> {
-		if (this.root === null) {
-			throw 'empty tree';
-		}
-		const node = farLeft(this.root!);
-		return {
-			first: node.key,
-			second: node.value
-		};
-	}
-
-	/**
-	 * Get <key, value> by max key
-	 */
-	max(): Part<K, V> {
-		if (this.root === null) {
-			throw 'empty tree';
-		}
-		const node = farRight(this.root!);
-		return {
-			first: node.key,
-			second: node.value
-		};
-	}
-
-	/**
 	 * Remove node from tree by key.
 	 * @param k 
 	 */
-	remove(k: K) {
+	remove(k: K): BSTree<K, V> {
 		if (this.root === null) {
-			return;
+			return this;
 		}
 		let node = this.root!;
 		let c = this.comparator(k, node.key);
 		while (c !== 0) {
 			if (c < 0) {
-				if (node.left === null) return;
+				if (node.left === null) return this;
 				else node = node.left!;
 			} else {
-				if (node.right === null) return;
+				if (node.right === null) return this;
 				else node = node.right!;
 			}
 			c = this.comparator(k, node.key);
@@ -194,6 +134,78 @@ export class BSTree<K, V = any> {
 				}
 			}
 		}
+		return this;
+	}
+
+	/**
+	 * preorder traversal for this tree.
+	 * root -> left tree -> right tree
+	 */
+	*preorderTraversal(): IterableIterator<Part<K, V>> {
+		yield* preorderTraversal(this.root);
+	}
+
+	/**
+	 * In-order traversal for the node
+	 * left tree -> root -> right tree
+	 */
+	*inorderTraversal(): IterableIterator<Part<K, V>> {
+		yield* inorderTraversal(this.root);
+	}
+
+	/**
+	 * Post-order traversal for the node
+	 * left tree -> right tree -> root 
+	 */
+	*postorderTraversal(): IterableIterator<Part<K, V>> {
+		yield* postorderTraversal(this.root);
+	}
+
+	/**
+	 * transform to array
+	 * @returns ordered list by key
+	 */
+	toList(): Array<Part<K, V>> {
+		const result = [];
+		for (let p of this.inorderTraversal()) result.push(p);
+		return result;
+	}
+
+	/**
+	 * Transform tree to js object { [key]: value }, expect key type is string or number.
+	 */
+	toJS(): any {
+		const obj: any = {};
+		for (let p of this.inorderTraversal()) obj[p.first] = p.second;
+		return obj;
+	}
+
+	/**
+	 * Get <key, value> by min key
+	 */
+	min(): Part<K, V> {
+		if (this.root === null) {
+			throw 'empty tree';
+		}
+		const node = farLeft(this.root!);
+		return {
+			first: node.key,
+			second: node.value
+		};
+	}
+
+	/**
+	 * Get <key, value> by max key
+	 */
+	max(): Part<K, V> {
+		if (this.root === null) {
+			throw 'empty tree';
+		}
+		const node = farRight(this.root!);
+		return {
+			first: node.key,
+			second: node.value
+		};
 	}
 }
 
