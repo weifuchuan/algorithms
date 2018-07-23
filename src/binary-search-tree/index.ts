@@ -5,36 +5,48 @@ import {
 	postorderTraversal,
 	farLeft,
 	farRight,
-	OrderedTree
+	lookup
 } from '../binary-tree-kit/index';
-
-export type Key = number | string;
 
 /**
  * Node is the node of binary tree. 
- * Key type must support <, >, =, so it will be number or string (type Key = number | string)
+ * @param <K> type K is key type
  * @param <V> type V is value type
  */
-export interface Node<V = any> extends BinaryTreeNode<Key, V, Node<V>> {}
+export interface Node<K, V = any> extends BinaryTreeNode<K, V, Node<K, V>> {}
 
 /**
  * BSTree is the class of binary search tree
- * Key type must support <, >, =, so it will be number or string (type Key = number | string)
+ * @param <K> type K is key type
  * @param <V> type V is value type
  */
-export class BSTree<V = any> {
-	private root: Node<V> | null = null;
-	constructor() {}
+export class BSTree<K, V = any> {
+	private root: Node<K, V> | null = null;
+	private comparator: (a: K, b: K) => number;
+
+	/**
+	 * 
+	 * @param comparator Comparator is to comparate two key, which return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object. By default, use < and ===. 
+	 */
+	constructor(
+		comparator: (a: K, b: K) => number = (a, b) => {
+			if (a === b) return 0;
+			if (a < b) return -1;
+			else return 1;
+		}
+	) {
+		this.comparator = comparator;
+	}
 	// insert a part of <key, value> into this tree
-	insert(k: Key, v: V) {
-		this.root = insert(this.root, k, v);
+	insert(k: K, v: V) {
+		this.root = insert(this.root, k, v, this.comparator);
 	}
 
 	/**
 	 * preorder traversal for this tree.
 	 * root -> left tree -> right tree
 	 */
-	*preorderTraversal(): IterableIterator<Part<Key, V>> {
+	*preorderTraversal(): IterableIterator<Part<K, V>> {
 		yield* preorderTraversal(this.root);
 	}
 
@@ -42,7 +54,7 @@ export class BSTree<V = any> {
 	 * In-order traversal for the node
 	 * left tree -> root -> right tree
 	 */
-	*inorderTraversal(): IterableIterator<Part<Key, V>> {
+	*inorderTraversal(): IterableIterator<Part<K, V>> {
 		yield* inorderTraversal(this.root);
 	}
 
@@ -50,7 +62,7 @@ export class BSTree<V = any> {
 	 * Post-order traversal for the node
 	 * left tree -> right tree -> root 
 	 */
-	*postorderTraversal(): IterableIterator<Part<Key, V>> {
+	*postorderTraversal(): IterableIterator<Part<K, V>> {
 		yield* postorderTraversal(this.root);
 	}
 
@@ -58,7 +70,7 @@ export class BSTree<V = any> {
 	 * transform to array
 	 * @returns ordered list by key
 	 */
-	toList(): Array<Part<Key, V>> {
+	toList(): Array<Part<K, V>> {
 		const result = [];
 		for (let p of this.inorderTraversal()) result.push(p);
 		return result;
@@ -69,14 +81,14 @@ export class BSTree<V = any> {
 	 * @param k the key
 	 * @returns [value, ok] if ok == true then value was exists in the tree
 	 */
-	lookup(k: Key): [V, boolean] {
-		return OrderedTree.lookup(this.root, k);
+	lookup(k: K): [V, boolean] {
+		return lookup(this.root, k, this.comparator);
 	}
 
 	/**
 	 * Get <key, value> by min key
 	 */
-	min(): Part<Key, V> {
+	min(): Part<K, V> {
 		if (this.root === null) {
 			throw 'empty tree';
 		}
@@ -90,7 +102,7 @@ export class BSTree<V = any> {
 	/**
 	 * Get <key, value> by max key
 	 */
-	max(): Part<Key, V> {
+	max(): Part<K, V> {
 		if (this.root === null) {
 			throw 'empty tree';
 		}
@@ -105,19 +117,21 @@ export class BSTree<V = any> {
 	 * Remove node from tree by key.
 	 * @param k 
 	 */
-	remove(k: Key) {
+	remove(k: K) {
 		if (this.root === null) {
 			return;
 		}
 		let node = this.root!;
-		while (node.key !== k) {
-			if (k < node.key) {
+		let c = this.comparator(k, node.key);
+		while (c !== 0) {
+			if (c < 0) {
 				if (node.left === null) return;
 				else node = node.left!;
 			} else {
 				if (node.right === null) return;
 				else node = node.right!;
 			}
+			c = this.comparator(k, node.key);
 		}
 		if (node.left !== null && node.right === null) {
 			node.left.parent = node.parent;
@@ -183,7 +197,16 @@ export class BSTree<V = any> {
 	}
 }
 
-export function insert<V = any>(node: Node<V> | null, k: Key, v: V): Node<V> {
+export function insert<K, V = any>(
+	node: Node<K, V> | null,
+	k: K,
+	v: V,
+	comparator: (a: K, b: K) => number = (a, b) => {
+		if (a === b) return 0;
+		if (a < b) return -1;
+		else return 1;
+	}
+): Node<K, V> {
 	if (node === null) {
 		return {
 			key: k,
@@ -197,9 +220,10 @@ export function insert<V = any>(node: Node<V> | null, k: Key, v: V): Node<V> {
 	let p = root;
 	let next: 'left' | 'self' | 'right' = 'self';
 	while (true) {
-		if (p.key === k) {
+		const c = comparator(k, p.key);
+		if (c === 0) {
 			next = 'self';
-		} else if (k < p.key) {
+		} else if (c < 0) {
 			next = 'left';
 		} else {
 			next = 'right';
@@ -215,7 +239,7 @@ export function insert<V = any>(node: Node<V> | null, k: Key, v: V): Node<V> {
 					parent: p,
 					left: null,
 					right: null
-				} as Node<V>;
+				};
 				break;
 			} else {
 				p = p.left;

@@ -98,33 +98,22 @@ export function rotateRight<K, V, N extends BinaryTreeNode<K, V, N>>(node: N): N
 	return x;
 }
 
-export namespace OrderedTree {
-	export function lookup<K, V, N extends BinaryTreeNode<K, V, N>>(node: N | null, k: K): [V, boolean] {
-		let p = node;
-		while (p) {
-			if (p.key === k) {
-				return [ p.value, true ];
-			}
-			if (k < p.key) {
-				p = p.left;
-			} else {
-				p = p.right;
-			}
-		}
-		return [ undefined as any, false ];
-	}
-
-	export function lookup2<K extends Comparable<K>, V, N extends BinaryTreeNode<K, V, any>>(
+	export function lookup<K, V, N extends BinaryTreeNode<K, V, N>>(
 		node: N | null,
-		k: K
+		k: K,
+		comparator: (a: K, b: K) => number = (a, b) => {
+			if (a === b) return 0;
+			if (a < b) return -1;
+			else return 1;
+		}
 	): [V, boolean] {
 		let p = node;
 		while (p) {
-			const c = k.compareTo(p.key);
-			if (c === 0) {
+			const c = comparator(k,p.key)
+			if (c===0) {
 				return [ p.value, true ];
 			}
-			if (c < 0) {
+			if (c<0) {
 				p = p.left;
 			} else {
 				p = p.right;
@@ -132,4 +121,3 @@ export namespace OrderedTree {
 		}
 		return [ undefined as any, false ];
 	}
-}
